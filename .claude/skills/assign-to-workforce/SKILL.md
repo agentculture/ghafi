@@ -205,7 +205,7 @@ and their tests pass.
 ### Human gate 3 — the final PR
 
 Once all waves are merged and the full test suite passes, the main agent opens
-a PR via the `cicd` skill (`agex pr open`). The human reviews and merges. This
+a PR via the `cicd` skill (`devex pr open`). The human reviews and merges. This
 is the last and only remaining human gate.
 
 ## After the final PR — summarize the delivery

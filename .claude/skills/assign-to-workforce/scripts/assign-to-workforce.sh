@@ -87,7 +87,7 @@ you are implementing. Results go to stdout, diagnostics to stderr.
 Human gates (three only):
   1. The exported spec (already closed by the /think leg).
   2. This implementation split plan (go/no-go to assign to workforce).
-  3. The final PR (opened by the main agent via `cicd` / `agex pr open`).
+  3. The final PR (opened by the main agent via `cicd` / `devex pr open`).
 
 The devague CLI is non-orchestrating (#20): `devague plan waves` describes
 the graph; the operator performs the fan-out. One worktree per task; TDD
@@ -171,9 +171,14 @@ def marker(task_id):
 
 
 def truncate(summary):
-    if len(summary) > MAX_SUMMARY_LEN:
-        return summary[:MAX_SUMMARY_LEN] + ELLIPSIS
-    return summary
+    if len(summary) <= MAX_SUMMARY_LEN:
+        return summary
+    # Reserve room for the ellipsis so the rendered width (ellipsis included)
+    # never exceeds MAX_SUMMARY_LEN (issue #77). The trailing clamp keeps the
+    # contract intact even in the degenerate MAX_SUMMARY_LEN <= len(ELLIPSIS)
+    # case (PR #78 review), where the reserved slice would otherwise underflow.
+    slice_len = max(0, MAX_SUMMARY_LEN - len(ELLIPSIS))
+    return (summary[:slice_len] + ELLIPSIS)[:MAX_SUMMARY_LEN]
 
 
 print(f"Implementation split plan — plan: {plan_slug}")
